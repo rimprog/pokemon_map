@@ -4,6 +4,12 @@ from django.db import models
 class PokemonElementType(models.Model):
     title = models.CharField('стихия', max_length=200)
     icon = models.ImageField('иконка', upload_to='elements_icons', null=True, blank=True)
+    strong_against = models.ManyToManyField(
+        'self',
+        verbose_name='силен против',
+        symmetrical=False,
+        blank=True
+    )
 
     def __str__(self):
         return self.title
@@ -18,15 +24,15 @@ class Pokemon(models.Model):
     previous_evolution = models.ForeignKey(
         'self',
         verbose_name='из кого эволюционировал',
-        on_delete=models.SET_NULL,
         related_name='next_evolutions',
+        on_delete=models.SET_NULL,
         null=True,
         blank=True
     )
     element_types = models.ManyToManyField(
         PokemonElementType,
-        related_name = 'pokemons',
         verbose_name='стихия',
+        related_name = 'pokemons',
         blank=True
     )
 
@@ -37,8 +43,8 @@ class Pokemon(models.Model):
 class PokemonEntity(models.Model):
     pokemon = models.ForeignKey(
         Pokemon,
-        related_name = 'pokemons_entities',
         verbose_name='покемон',
+        related_name = 'pokemons_entities',
         on_delete=models.CASCADE
     )
     latitude = models.FloatField('широта')

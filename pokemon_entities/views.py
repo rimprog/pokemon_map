@@ -128,7 +128,8 @@ def show_pokemon(request, pokemon_id):
     for pokemon_element_type in pokemon.element_types.all():
         pokemon_element_type = {
             'title': pokemon_element_type.title,
-            'img': request.build_absolute_uri(pokemon_element_type.icon.url) if pokemon_element_type.icon else DEFAULT_IMAGE_URL
+            'img': request.build_absolute_uri(pokemon_element_type.icon.url) if pokemon_element_type.icon else DEFAULT_IMAGE_URL,
+            "strong_against": pokemon_element_type.strong_against.all()
         }
         pokemon_element_types.append(pokemon_element_type)
 
