@@ -107,12 +107,14 @@ def show_pokemon(request, pokemon_id):
         "description": pokemon.description,
         "img_url": pokemon.photo.url if pokemon.photo else DEFAULT_IMAGE_URL,
     }
+
     if pokemon.previous_evolution:
         requested_pokemon["previous_evolution"] = {
             "title_ru": pokemon.previous_evolution.title,
             "pokemon_id": pokemon.previous_evolution.id,
             "img_url": pokemon.previous_evolution.photo.url if pokemon.previous_evolution.photo else DEFAULT_IMAGE_URL
         }
+
     if pokemon.next_evolutions.count() > 0:
         next_evolution = pokemon.next_evolutions.all()[0]
         requested_pokemon["next_evolution"] = {
@@ -120,6 +122,16 @@ def show_pokemon(request, pokemon_id):
             "pokemon_id": next_evolution.id,
             "img_url": next_evolution.photo.url if next_evolution.photo else DEFAULT_IMAGE_URL
         }
+
+    pokemon_element_types = []
+    for pokemon_element_type in pokemon.element_types.all():
+        pokemon_element_type = {
+            'title': pokemon_element_type.title,
+            'img': request.build_absolute_uri(pokemon_element_type.icon.url) if pokemon_element_type.icon else DEFAULT_IMAGE_URL
+        }
+        pokemon_element_types.append(pokemon_element_type)
+        
+    requested_pokemon["element_types"] = pokemon_element_types
 
     return render(request, "pokemon.html", context={'map': folium_map._repr_html_(),
                                                     'pokemon': requested_pokemon})

@@ -3,10 +3,11 @@ from django.db import models
 
 class PokemonElementType(models.Model):
     title = models.CharField('стихия', max_length=200)
+    icon = models.ImageField('иконка', upload_to='elements_icons', null=True, blank=True)
 
     def __str__(self):
         return self.title
-        
+
 
 class Pokemon(models.Model):
     title = models.CharField('название RUS', max_length=200)
@@ -22,7 +23,11 @@ class Pokemon(models.Model):
         null=True,
         blank=True
     )
-    element_type = models.ManyToManyField(PokemonElementType)
+    element_types = models.ManyToManyField(
+        PokemonElementType,
+        verbose_name='стихия',
+        blank=True
+    )
 
     def __str__(self):
         return self.title
