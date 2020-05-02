@@ -4,6 +4,7 @@ from django.http import HttpResponseNotFound
 from django.shortcuts import render
 from django.shortcuts import get_object_or_404
 from django.http import Http404
+from django.db import connection
 
 from .models import PokemonEntity
 from .models import Pokemon
@@ -115,8 +116,8 @@ def show_pokemon(request, pokemon_id):
             "img_url": pokemon.previous_evolution.photo.url if pokemon.previous_evolution.photo else DEFAULT_IMAGE_URL
         }
 
-    if pokemon.next_evolutions.first():
-        next_evolution = pokemon.next_evolutions.first()
+    next_evolution = pokemon.next_evolutions.first()
+    if next_evolution:
         requested_pokemon["next_evolution"] = {
             "title_ru": next_evolution.title,
             "pokemon_id": next_evolution.id,
