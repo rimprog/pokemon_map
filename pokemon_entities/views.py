@@ -15,16 +15,40 @@ MOSCOW_CENTER = [55.751244, 37.618423]
 DEFAULT_IMAGE_URL = "https://vignette.wikia.nocookie.net/pokemon/images/6/6e/%21.png/revision/latest/fixed-aspect-ratio-down/width/240/height/240?cb=20130525215832&fill=transparent"
 
 
-def add_pokemon(folium_map, lat, lon, name, image_url=DEFAULT_IMAGE_URL):
+def add_pokemon(folium_map, lat, lon, name, pokemon_entity_info_html, image_url=DEFAULT_IMAGE_URL):
     icon = folium.features.CustomIcon(
         image_url,
         icon_size=(50, 50),
     )
     folium.Marker(
         [lat, lon],
-        tooltip=name,
+        tooltip=name.encode('ascii', errors='xmlcharrefreplace').decode('utf-8'),
         icon=icon,
+        popup=pokemon_entity_info_html.encode('ascii', errors='xmlcharrefreplace').decode('utf-8')
     ).add_to(folium_map)
+
+
+def prepare_pokemon_entity_info_html(pokemon_entity):
+    pokemon_entity_info_html = """
+        <h3> Характеристики покемона:</h3>
+        <p>Появился: {appeared_at}</p>
+        <p>Исчезнет: {disappeared_at}</p>
+        <p>Уровень: {level}</p>
+        <p>Здоровье: {health}</p>
+        <p>Сила: {strength}</p>
+        <p>Защита: {defence}</p>
+        <p>Выносливость: {stamina}</p>
+        """.format(
+                appeared_at=pokemon_entity.appeared_at,
+                disappeared_at=pokemon_entity.disappeared_at,
+                level=pokemon_entity.level,
+                health=pokemon_entity.health,
+                strength=pokemon_entity.strength,
+                defence=pokemon_entity.defence,
+                stamina=pokemon_entity.stamina
+            )
+
+    return pokemon_entity_info_html
 
 
 def show_all_pokemons(request):
@@ -38,6 +62,7 @@ def show_all_pokemons(request):
             pokemon_entity.latitude,
             pokemon_entity.longitude,
             pokemon_entity.pokemon.title,
+            prepare_pokemon_entity_info_html(pokemon_entity),
             request.build_absolute_uri(pokemon_entity.pokemon.photo.url) if pokemon_entity.pokemon.photo else DEFAULT_IMAGE_URL
         )
 
@@ -70,6 +95,7 @@ def show_pokemon(request, pokemon_id):
             pokemon_entity.latitude,
             pokemon_entity.longitude,
             pokemon_entity.pokemon.title,
+            prepare_pokemon_entity_info_html(pokemon_entity),
             request.build_absolute_uri(pokemon_entity.pokemon.photo.url) if pokemon_entity.pokemon.photo else DEFAULT_IMAGE_URL
         )
 
