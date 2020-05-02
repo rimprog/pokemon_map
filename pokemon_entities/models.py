@@ -25,6 +25,7 @@ class Pokemon(models.Model):
     )
     element_types = models.ManyToManyField(
         PokemonElementType,
+        related_name = 'pokemons',
         verbose_name='стихия',
         blank=True
     )
@@ -36,6 +37,7 @@ class Pokemon(models.Model):
 class PokemonEntity(models.Model):
     pokemon = models.ForeignKey(
         Pokemon,
+        related_name = 'pokemons_entities',
         verbose_name='покемон',
         on_delete=models.CASCADE
     )
