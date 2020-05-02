@@ -115,8 +115,8 @@ def show_pokemon(request, pokemon_id):
             "img_url": pokemon.previous_evolution.photo.url if pokemon.previous_evolution.photo else DEFAULT_IMAGE_URL
         }
 
-    if pokemon.next_evolutions.count() > 0:
-        next_evolution = pokemon.next_evolutions.all()[0]
+    if pokemon.next_evolutions.first():
+        next_evolution = pokemon.next_evolutions.first()
         requested_pokemon["next_evolution"] = {
             "title_ru": next_evolution.title,
             "pokemon_id": next_evolution.id,
